@@ -1,16 +1,12 @@
-"""
 Streamlit app: Rain Tomorrow Predictor
 Run with:  streamlit run app.py
 Requires:  rain_model.pkl (produced by the training notebook) in the same folder.
-"""
 
 import streamlit as st
 import pandas as pd
 import joblib
 
-# ----------------------------------------------------------------------------
 # Page setup
-# ----------------------------------------------------------------------------
 st.set_page_config(page_title="Rain Tomorrow Predictor", page_icon="\U0001F327", layout="centered")
 
 st.title("\U0001F327 Will It Rain Tomorrow?")
@@ -20,9 +16,7 @@ st.write(
 )
 
 
-# ----------------------------------------------------------------------------
-# Load the trained model bundle (cached so it only loads once per session)
-# ----------------------------------------------------------------------------
+# Load the trained model bundle 
 @st.cache_resource
 def load_bundle(path: str = "rain_model.pkl"):
     return joblib.load(path)
@@ -35,9 +29,7 @@ le_raintoday = bundle["le_raintoday"]
 le_target = bundle["le_target"]
 feature_cols = bundle["feature_cols"]
 
-# ----------------------------------------------------------------------------
 # Sidebar inputs — one widget per feature the model expects
-# ----------------------------------------------------------------------------
 st.sidebar.header("Today\'s Conditions")
 
 season = st.sidebar.selectbox("Season", options=list(le_season.classes_))
@@ -53,9 +45,7 @@ rain_today = st.sidebar.selectbox("Did it rain today?", options=list(le_raintoda
 
 predict_clicked = st.sidebar.button("\U0001F52E Predict", type="primary", use_container_width=True)
 
-# ----------------------------------------------------------------------------
 # Build the feature row exactly the way the training data was encoded
-# ----------------------------------------------------------------------------
 def build_input_row():
     row = {
         "Season_enc": le_season.transform([season])[0],
@@ -72,9 +62,7 @@ def build_input_row():
     return pd.DataFrame([row])[feature_cols]
 
 
-# ----------------------------------------------------------------------------
 # Main panel: show a summary of inputs, then the prediction once requested
-# ----------------------------------------------------------------------------
 with st.expander("Show the exact values being sent to the model"):
     st.write(build_input_row())
 
